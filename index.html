@@ -1,0 +1,238 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream: #FDFBF7;
+    --charcoal: #2D2D2D;
+    --terracotta: #C4785A;
+    --warm-beige: #EDE8E0;
+    --muted: #8A8480;
+    --border: rgba(45,45,45,0.1);
+    --nav-h: 72px;
+    --map-bg: #E8EFF7;
+    --map-text: #1C4E8A;
+    --booked-green: #2E6B3E;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--cream); color: var(--charcoal); font-family: 'DM Sans', sans-serif; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  .app { max-width: 430px; margin: 0 auto; min-height: 100vh; position: relative; background: var(--cream); box-shadow: 0 0 60px rgba(0,0,0,0.06); }
+
+  .header { padding: 48px 24px 28px; background: var(--cream); position: relative; overflow: hidden; border-bottom: 1px solid var(--border); }
+  .header-floral-tl { position: absolute; top: -4px; left: -4px; width: 120px; height: 120px; opacity: 0.18; }
+  .header-floral-br { position: absolute; bottom: -8px; right: -8px; width: 100px; height: 100px; opacity: 0.14; }
+  .header-inner { position: relative; z-index: 1; text-align: center; }
+  .header-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 8px; }
+  .header-title { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 400; line-height: 1.15; color: var(--charcoal); letter-spacing: 0.01em; }
+  .header-title em { font-style: italic; color: var(--terracotta); }
+  .header-hearts { margin-top: 12px; display: flex; justify-content: center; gap: 6px; }
+  .heart { color: var(--terracotta); font-size: 10px; opacity: 0.7; }
+
+  .tabs-wrap { position: sticky; top: 0; z-index: 10; background: var(--cream); border-bottom: 1px solid var(--border); padding: 0 16px; }
+  .tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn { flex: 1; min-width: 0; padding: 14px 4px 12px; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 0.04em; position: relative; transition: color 0.2s; white-space: nowrap; }
+  .tab-btn.active { color: var(--charcoal); }
+  .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 20%; right: 20%; height: 2px; background: var(--terracotta); border-radius: 2px 2px 0 0; }
+  .tab-day-label { display: block; font-size: 10px; font-weight: 300; color: var(--muted); margin-top: 1px; }
+  .tab-btn.active .tab-day-label { color: var(--terracotta); }
+
+  .content { padding: 20px 16px calc(var(--nav-h) + 24px); }
+  .day-header { margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .day-number { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 4px; }
+  .day-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; color: var(--charcoal); }
+
+  .items { display: flex; flex-direction: column; gap: 12px; }
+
+  .item { border-radius: 10px; padding: 14px 16px; background: white; border: 1px solid var(--border); }
+  .item.booked { border-left: 3px solid var(--charcoal); border-radius: 0 10px 10px 0; padding-left: 14px; }
+
+  .item-time { font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+  .item-title { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 500; color: var(--charcoal); line-height: 1.2; margin-bottom: 4px; }
+
+  /* Booked: filled green pill */
+  .booked-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--booked-green); color: #fff;
+    font-size: 8px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 20px; margin-bottom: 6px;
+  }
+
+  /* Map link: outlined blue pill — clearly distinct in colour, shape, and fill style */
+  .map-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .map-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 500;
+    color: var(--map-text);
+    background: var(--map-bg);
+    border: 1px solid #B0C8E8;
+    padding: 4px 10px; border-radius: 6px;
+    text-decoration: none; letter-spacing: 0.02em;
+    transition: opacity 0.15s;
+  }
+  .map-link:hover { opacity: 0.75; }
+
+  .item-desc { font-size: 12.5px; font-weight: 300; color: #5A5652; line-height: 1.55; margin-bottom: 8px; }
+  .item-note { font-size: 11.5px; font-style: italic; color: var(--terracotta); margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(196,120,90,0.15); }
+
+  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; height: var(--nav-h); background: rgba(253,251,247,0.97); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--border); display: flex; align-items: center; z-index: 100; padding: 0 8px; padding-bottom: env(safe-area-inset-bottom, 0); }
+  .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: var(--charcoal); padding: 8px 4px; border-radius: 10px; transition: background 0.15s; min-height: 52px; }
+  .nav-btn:active { background: var(--warm-beige); }
+  .nav-btn svg { width: 24px; height: 24px; stroke-width: 1.5; }
+  .nav-label { font-size: 10pt; font-weight: 400; color: var(--charcoal); white-space: nowrap; }
+  .nav-divider { width: 1px; height: 32px; background: var(--border); flex-shrink: 0; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .day-panel { animation: fadeIn 0.25s ease; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="header">
+    <svg class="header-floral-tl" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="60" cy="60" r="8" fill="#C4785A"/>
+      <ellipse cx="60" cy="35" rx="6" ry="14" fill="#C4785A" transform="rotate(0 60 60)"/>
+      <ellipse cx="60" cy="35" rx="6" ry="14" fill="#C4785A" transform="rotate(45 60 60)"/>
+      <ellipse cx="60" cy="35" rx="6" ry="14" fill="#C4785A" transform="rotate(90 60 60)"/>
+      <ellipse cx="60" cy="35" rx="6" ry="14" fill="#C4785A" transform="rotate(135 60 60)"/>
+      <ellipse cx="60" cy="35" rx="6" ry="14" fill="#C4785A" transform="rotate(180 60 60)"/>
+      <ellipse cx="60" cy="35" rx="6" ry="14" fill="#C4785A" transform="rotate(225 60 60)"/>
+      <ellipse cx="60" cy="35" rx="6" ry="14" fill="#C4785A" transform="rotate(270 60 60)"/>
+      <ellipse cx="60" cy="35" rx="6" ry="14" fill="#C4785A" transform="rotate(315 60 60)"/>
+      <circle cx="30" cy="90" r="4" fill="#8FAF8A"/>
+      <ellipse cx="30" cy="76" rx="4" ry="9" fill="#8FAF8A" transform="rotate(0 30 90)"/>
+      <ellipse cx="30" cy="76" rx="4" ry="9" fill="#8FAF8A" transform="rotate(60 30 90)"/>
+      <ellipse cx="30" cy="76" rx="4" ry="9" fill="#8FAF8A" transform="rotate(120 30 90)"/>
+      <ellipse cx="30" cy="76" rx="4" ry="9" fill="#8FAF8A" transform="rotate(180 30 90)"/>
+      <ellipse cx="30" cy="76" rx="4" ry="9" fill="#8FAF8A" transform="rotate(240 30 90)"/>
+      <ellipse cx="30" cy="76" rx="4" ry="9" fill="#8FAF8A" transform="rotate(300 30 90)"/>
+    </svg>
+    <svg class="header-floral-br" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="6" fill="#8FAF8A"/>
+      <ellipse cx="50" cy="30" rx="5" ry="12" fill="#8FAF8A" transform="rotate(0 50 50)"/>
+      <ellipse cx="50" cy="30" rx="5" ry="12" fill="#8FAF8A" transform="rotate(60 50 50)"/>
+      <ellipse cx="50" cy="30" rx="5" ry="12" fill="#8FAF8A" transform="rotate(120 50 50)"/>
+      <ellipse cx="50" cy="30" rx="5" ry="12" fill="#8FAF8A" transform="rotate(180 50 50)"/>
+      <ellipse cx="50" cy="30" rx="5" ry="12" fill="#8FAF8A" transform="rotate(240 50 50)"/>
+      <ellipse cx="50" cy="30" rx="5" ry="12" fill="#8FAF8A" transform="rotate(300 50 50)"/>
+    </svg>
+    <div class="header-inner">
+      <div class="header-eyebrow">June 18 – 22, 2026 · Porto</div>
+      <h1 class="header-title"><em>Kat's</em> Bachelorette<br>in Porto</h1>
+      <div class="header-hearts">
+        <span class="heart">♥</span><span class="heart">♥</span><span class="heart">♥</span>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs-wrap">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchDay(0,this)">Day 1<span class="tab-day-label">Thu Jun 18</span></button>
+      <button class="tab-btn" onclick="switchDay(1,this)">Day 2<span class="tab-day-label">Fri Jun 19</span></button>
+      <button class="tab-btn" onclick="switchDay(2,this)">Day 3<span class="tab-day-label">Sat Jun 20</span></button>
+      <button class="tab-btn" onclick="switchDay(3,this)">Day 4<span class="tab-day-label">Sun Jun 21</span></button>
+      <button class="tab-btn" onclick="switchDay(4,this)">Day 5<span class="tab-day-label">Mon Jun 22</span></button>
+    </div>
+  </nav>
+
+  <main class="content" id="content"></main>
+
+  <nav class="bottom-nav">
+    <a class="nav-btn" href="https://secure.splitwise.com/#/groups/98281688" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      <span class="nav-label">Log Expense</span>
+    </a>
+    <div class="nav-divider"></div>
+    <a class="nav-btn" href="https://chat.whatsapp.com/ElqxFJR372S8zoVCqWftKX" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="nav-label">Group Chat</span>
+    </a>
+    <div class="nav-divider"></div>
+    <a class="nav-btn" href="https://maps.app.goo.gl/r3ys5nhvSgLWsUtz8" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="nav-label">Our Airbnb</span>
+    </a>
+  </nav>
+</div>
+
+<script>
+const DAYS = [
+  {
+    label: "Day 1", title: "Arrival Day",
+    items: [
+      { time: "11:45 AM", title: "Land & Check-In", desc: "Flight lands! Grab an Uber straight to Rua do Campinho 18 and get settled into the Airbnb.", booked: false, maps: [{ label: "📍 View on Map", url: "https://maps.app.goo.gl/r3ys5nhvSgLWsUtz8" }] },
+      { time: "Afternoon", title: "Quick Bite & Fat Nap", desc: "Grab a casual pastry or sandwich near the Airbnb, then crash for a well-deserved fat nap. You've earned it.", booked: false, maps: [] },
+      { time: "7:00 PM", title: "Dinner at Mito", desc: "Chef-approved gem with shared plates and a Michelin Guide nod. The perfect welcome dinner.", booked: true, maps: [{ label: "📍 View on Map", url: "https://www.google.com/maps/search/?api=1&query=Mito+Restaurante+Rua+de+Jose+Falcao+Porto" }] }
+    ]
+  },
+  {
+    label: "Day 2", title: "Explore & Dine",
+    items: [
+      { time: "Morning", title: "Brunch (TBD)", desc: "A leisurely sit-down brunch to ease into the day. Location TBD — ask the group!", booked: false, maps: [] },
+      { time: "Afternoon", title: "Exploring & Shopping", desc: "Wander through Rua das Flores, Rua de Cedofeita, and Rua de Santa Catarina — Porto's most charming streets for unique shops, tiles, and good energy.", booked: false, maps: [{ label: "📍 Rua das Flores", url: "https://www.google.com/maps/search/?api=1&query=Rua+das+Flores+Porto" }] },
+      { time: "6:00 PM", title: "Dinner at Porto Antigo Comida Caseira", desc: "Traditional Portuguese dinner run by local women. Authentic, heartfelt, and delicious. After dinner, golden-hour photoshoot at Jardim do Morro.", booked: true, maps: [{ label: "📍 Porto Antigo", url: "https://www.google.com/maps/search/?api=1&query=Porto+Antigo+Comida+Caseira+Vila+Nova+de+Gaia" }, { label: "📍 Jardim do Morro", url: "https://www.google.com/maps/search/?api=1&query=Jardim+do+Morro+Porto" }] }
+    ]
+  },
+  {
+    label: "Day 3", title: "Pastries, Ceramics & Nightlife",
+    items: [
+      { time: "Morning", title: "Ocean Air Coffee & Breeze Walk", desc: "Coastal walk from Foz do Douro all the way into Matosinhos. Salty air, Atlantic views, and morning coffee.", booked: false, maps: [{ label: "📍 View on Map", url: "https://www.google.com/maps/search/?api=1&query=Passeio+Alegre+Foz+do+Douro+Porto" }] },
+      { time: "Early Afternoon", title: "Lunch + Ceramics Shopping", desc: "Hunt for gorgeous Portuguese ceramics at Costa Nova Porto Store and TUWATERRA. Reminder: pack bubble wrap!", booked: false, maps: [{ label: "📍 Costa Nova", url: "https://www.google.com/maps/search/?api=1&query=Costa+Nova+Porto+Store+Rua+de+Sa+da+Bandeira" }, { label: "📍 Tuwaterra", url: "https://www.google.com/maps/search/?api=1&query=Tuwaterra+Rua+do+Barao+de+Forrester+Porto" }] },
+      { time: "3:30 PM", title: "Pastel de Nata Baking Class", desc: "A 1.5-hour hands-on workshop — roll the dough, make the custard, torch the pastries. Drinks included. The most Porto afternoon imaginable.", booked: true, maps: [{ label: "📍 View on Map", url: "https://www.google.com/maps/search/?api=1&query=R.+Chã+77,+4000-165+Porto,+Portugal" }] },
+      { time: "Night", title: "The \"One Night Only\" Night Out", desc: "Our designated big night in the Galerias de Paris area. Fun drinks, high energy, and celebrating the bride all night long.", booked: false, maps: [{ label: "📍 Galerias de Paris", url: "https://www.google.com/maps/search/?api=1&query=Rua+das+Galerias+de+Paris+Porto" }] }
+    ]
+  },
+  {
+    label: "Day 4", title: "Recovery & Celebration",
+    items: [
+      { time: "10:30 AM", title: "Brunch (TBD)", desc: "Coffee and pastries at a local spot before the massage. Something easy, cozy, and carb-forward.", booked: false, maps: [] },
+      { time: "Late Afternoon", title: "Eco Massage Recovery Session", desc: "Perfectly timed to melt away the dancing fatigue. A full bachelorette group massage package. Bliss.", booked: true, maps: [{ label: "📍 View on Map", url: "https://www.google.com/maps/search/?api=1&query=Eco+Massage+Porto" }] },
+      { time: "6:00 PM", title: "Dinner at Chama — Theme Night!", desc: "The main event. An unbelievable 2.5-hour wood-fired tasting menu experience.", note: "🤍 Kat wears white. Everyone else wears colorful dresses!", booked: true, maps: [{ label: "📍 View on Map", url: "https://www.google.com/maps/search/?api=1&query=Chama+Restaurante+Porto" }] }
+    ]
+  },
+  {
+    label: "Day 5", title: "One Last Pastel de Nata",
+    items: [
+      { time: "Early Morning", title: "Final Pastries & Packing", desc: "One last round of specialty coffee and pastel de nata before packing up. Savour every sip.", booked: false, maps: [] },
+      { time: "10:30 AM", title: "Head to the Airport", desc: "Flight departs at 1:30 PM — head out around 10:30 AM. Carry Porto in your heart forever. 🧡", booked: false, maps: [{ label: "📍 OPO Airport", url: "https://www.google.com/maps/search/?api=1&query=Francisco+Sa+Carneiro+Airport+OPO+Porto" }] }
+    ]
+  }
+];
+
+function renderDay(index) {
+  const day = DAYS[index];
+  let html = `<div class="day-panel"><div class="day-header"><div class="day-number">${day.label}</div><div class="day-title">${day.title}</div></div><div class="items">`;
+  day.items.forEach(item => {
+    html += `<div class="item${item.booked ? ' booked' : ''}">`;
+    if (item.time) html += `<div class="item-time">${item.time}</div>`;
+    if (item.booked) html += `<div class="booked-badge">✓ Booked</div>`;
+    html += `<div class="item-title">${item.title}</div>`;
+    html += `<div class="item-desc">${item.desc}</div>`;
+    if (item.note) html += `<div class="item-note">${item.note}</div>`;
+    if (item.maps && item.maps.length > 0) {
+      html += `<div class="map-links">`;
+      item.maps.forEach(m => { html += `<a class="map-link" href="${m.url}" target="_blank" rel="noopener">${m.label}</a>`; });
+      html += `</div>`;
+    }
+    html += `</div>`;
+  });
+  html += `</div></div>`;
+  document.getElementById('content').innerHTML = html;
+}
+
+function switchDay(index, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDay(index);
+  window.scrollTo(0, 0);
+}
+
+renderDay(0);
+</script>
+</body>
+</html>
